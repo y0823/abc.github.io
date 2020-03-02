@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://y0823.github.io</id>
     <title>不学无术</title>
-    <updated>2020-03-02T11:53:22.530Z</updated>
+    <updated>2020-03-02T13:54:46.662Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://y0823.github.io"/>
     <link rel="self" href="https://y0823.github.io/atom.xml"/>
@@ -11,17 +11,36 @@
     <icon>https://y0823.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 不学无术</rights>
     <entry>
-        <title type="html"><![CDATA[hello world]]></title>
-        <id>https://y0823.github.io/post/hellow world/</id>
-        <link href="https://y0823.github.io/post/hellow world/">
+        <title type="html"><![CDATA[EXCEL 单元格中文提取拼音首字母的实现方法]]></title>
+        <id>https://y0823.github.io/post/excel-dan-yuan-ge-zhong-wen-ti-qu-pin-yin-shou-zi-mu-de-shi-xian-fang-fa/</id>
+        <link href="https://y0823.github.io/post/excel-dan-yuan-ge-zhong-wen-ti-qu-pin-yin-shou-zi-mu-de-shi-xian-fang-fa/">
         </link>
         <updated>2018-12-11T16:00:00.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="">◔‸◔☀☀</h2>
+        <content type="html"><![CDATA[<p>在某些领域的工作中，经常会碰到中文名称需要提取每个字拼音首字母的情形，以便于用来进行检索。比如图书名称索引（当然真正的图书馆大量的图书并不会用EXCEL来实现），如下图右侧的字母缩写</p>
+<figure data-type="image" tabindex="1"><img src="https://y0823.github.io/post-images/1583156708134.png" alt="" loading="lazy"></figure>
+<p>事实上，对于汉字转拼音首字母，网上有一套现成的方案。直接引用就可以实现。<strong>本文图中公式前后的一对｛｝均非手工输入，而是在输入公式内容后，同时按CTRL+SHIFT+ENTER实现。</strong></p>
+<p>公式如下：</p>
+<pre><code>=LOOKUP(MID(A1,ROW($1:$6),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})
+
+
+</code></pre>
+<p>这其中 ROW($1:$6)的作用是形成一个数组，即｛1,2,3,4,5,6}。当然了，这个公式仅限于取6个汉字的拼音首字母。正常使用时，为了保证可扩展性，可以使用ROW(INDIRECT(&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>:</mo></mrow><annotation encoding="application/x-tex">1:</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span></span></span>&quot;&amp;LEN(A1)))这个公式来生成动态的数组。它会自动判断单元格有多少字符。如果用可扩展的公式的话，应该是这样的公式：</p>
+<pre><code>`=LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})`
+</code></pre>
+<p>​        这个公式得出的结果只能是第一个汉字的拼音首字母，虽然公式已经将每个汉字的拼音首字母提取了，但是并没有通过一个文本连接函数将其连接起来，形成一个完整的文本。文本连接函数有和个，CONCATENATE这个函数并不支持数组公式，所以无法使用。从2019开始，包括OFFICE365，内置的concat 、textjoin这两个函数是支持数组公式的。可以使用这两个公式中的任意一个。区别在于concat只能简单的将数组中的文本连接成一个文本，而textjoin是可以在需要连接的文本中间添加连接符。</p>
 <ul>
-<li>中国</li>
-<li>美国<br>
-<img src="https://y0823.github.io/post-images/1583149495125.png" alt="" loading="lazy"></li>
+<li><strong>使用concat方法实现</strong></li>
 </ul>
+<pre><code>=CONCAT((LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})))
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://y0823.github.io/post-images/1583156753804.png" alt="" loading="lazy"></figure>
+<ul>
+<li><strong>使用TEXTJOIN方法实现</strong></li>
+</ul>
+<pre><code>=TEXTJOIN(&quot;-&quot;,TRUE,(LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})))
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://y0823.github.io/post-images/1583156766471.png" alt="" loading="lazy"></figure>
+<p>这样就实现了汉字取拼音首字母的功能。但这个方法仍然有一个缺点，那就是无法区分多音字。</p>
 ]]></content>
     </entry>
 </feed>

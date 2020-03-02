@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://y0823.github.io</id>
     <title>不学无术</title>
-    <updated>2020-03-02T13:54:46.662Z</updated>
+    <updated>2020-03-02T13:58:24.966Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://y0823.github.io"/>
     <link rel="self" href="https://y0823.github.io/atom.xml"/>
@@ -15,7 +15,7 @@
         <id>https://y0823.github.io/post/excel-dan-yuan-ge-zhong-wen-ti-qu-pin-yin-shou-zi-mu-de-shi-xian-fang-fa/</id>
         <link href="https://y0823.github.io/post/excel-dan-yuan-ge-zhong-wen-ti-qu-pin-yin-shou-zi-mu-de-shi-xian-fang-fa/">
         </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
+        <updated>2020-03-02T13:58:01.000Z</updated>
         <content type="html"><![CDATA[<p>在某些领域的工作中，经常会碰到中文名称需要提取每个字拼音首字母的情形，以便于用来进行检索。比如图书名称索引（当然真正的图书馆大量的图书并不会用EXCEL来实现），如下图右侧的字母缩写</p>
 <figure data-type="image" tabindex="1"><img src="https://y0823.github.io/post-images/1583156708134.png" alt="" loading="lazy"></figure>
 <p>事实上，对于汉字转拼音首字母，网上有一套现成的方案。直接引用就可以实现。<strong>本文图中公式前后的一对｛｝均非手工输入，而是在输入公式内容后，同时按CTRL+SHIFT+ENTER实现。</strong></p>

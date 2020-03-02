@@ -7,7 +7,7 @@
 <title>
     EXCEL 单元格中文提取拼音首字母的实现方法 | 不学无术
 </title>
-<link rel="shortcut icon" href="https://y0823.github.io/favicon.ico?v=1583158713985">
+<link rel="shortcut icon" href="https://y0823.github.io/favicon.ico?v=1583159300783">
 <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
 <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
@@ -35,7 +35,7 @@
     <div class="nav">
         <div class="logo">
             <a href="https://y0823.github.io">
-                <img class="avatar" src="https://y0823.github.io/images/avatar.png?v=1583158713985" alt="">
+                <img class="avatar" src="https://y0823.github.io/images/avatar.png?v=1583159300783" alt="">
             </a>
             <div class="site-title">
                 <h1>
@@ -112,7 +112,7 @@
                             <time class="post-time">2020-03-02</time>
                             
                                 <a href="https://y0823.github.io/tag/ZPF8Y1hIi/" class="post-tag i-tag
-                            i-tag-warning">
+                            i-tag-error">
                             #学习笔记
                         </a>
                                 
@@ -123,25 +123,19 @@
 <figure data-type="image" tabindex="1"><img src="https://y0823.github.io/post-images/1583156708134.png" alt="" loading="lazy"></figure>
 <p>事实上，对于汉字转拼音首字母，网上有一套现成的方案。直接引用就可以实现。<strong>本文图中公式前后的一对｛｝均非手工输入，而是在输入公式内容后，同时按CTRL+SHIFT+ENTER实现。</strong></p>
 <p>公式如下：</p>
-<pre><code>=LOOKUP(MID(A1,ROW($1:$6),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})
-
-
-</code></pre>
+<p><code>=LOOKUP(MID(A1,ROW($1:$6),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})</code></p>
 <p>这其中 ROW($1:$6)的作用是形成一个数组，即｛1,2,3,4,5,6}。当然了，这个公式仅限于取6个汉字的拼音首字母。正常使用时，为了保证可扩展性，可以使用ROW(INDIRECT(&quot;<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>:</mo></mrow><annotation encoding="application/x-tex">1:</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span></span></span>&quot;&amp;LEN(A1)))这个公式来生成动态的数组。它会自动判断单元格有多少字符。如果用可扩展的公式的话，应该是这样的公式：</p>
-<pre><code>`=LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})`
-</code></pre>
+<p><code>=LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})</code></p>
 <p>​        这个公式得出的结果只能是第一个汉字的拼音首字母，虽然公式已经将每个汉字的拼音首字母提取了，但是并没有通过一个文本连接函数将其连接起来，形成一个完整的文本。文本连接函数有和个，CONCATENATE这个函数并不支持数组公式，所以无法使用。从2019开始，包括OFFICE365，内置的concat 、textjoin这两个函数是支持数组公式的。可以使用这两个公式中的任意一个。区别在于concat只能简单的将数组中的文本连接成一个文本，而textjoin是可以在需要连接的文本中间添加连接符。</p>
 <ul>
 <li><strong>使用concat方法实现</strong></li>
 </ul>
-<pre><code>=CONCAT((LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})))
-</code></pre>
+<p><code>=CONCAT((LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})))</code></p>
 <figure data-type="image" tabindex="2"><img src="https://y0823.github.io/post-images/1583156753804.png" alt="" loading="lazy"></figure>
 <ul>
 <li><strong>使用TEXTJOIN方法实现</strong></li>
 </ul>
-<pre><code>=TEXTJOIN(&quot;-&quot;,TRUE,(LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})))
-</code></pre>
+<p><code>=TEXTJOIN(&quot;-&quot;,TRUE,(LOOKUP(MID(A1,ROW(INDIRECT(&quot;$1:$&quot;&amp;LEN(A1))),1), {&quot;&quot;,&quot;&quot;;&quot;吖&quot;,&quot;A&quot;;&quot;八&quot;,&quot;B&quot;;&quot;攃&quot;,&quot;C&quot;;&quot;咑&quot;,&quot;D&quot;;&quot;妸&quot;,&quot;E&quot;;&quot;发&quot;,&quot;F&quot;;&quot;旮&quot;,&quot;G&quot;;&quot;哈&quot;,&quot;H&quot;;&quot;丌&quot;,&quot;J&quot;;&quot;咔&quot;,&quot;K&quot;;&quot;垃&quot;,&quot;L&quot;;&quot;妈&quot;,&quot;M&quot;;&quot;乸&quot;,&quot;N&quot;;&quot;噢&quot;,&quot;O&quot;;&quot;帊&quot;,&quot;P&quot;;&quot;七&quot;,&quot;Q&quot;;&quot;冄&quot;,&quot;R&quot;;&quot;仨&quot;,&quot;S&quot;;&quot;他&quot;,&quot;T&quot;;&quot;屲&quot;,&quot;W&quot;;&quot;夕&quot;,&quot;X&quot;;&quot;丫&quot;,&quot;Y&quot;;&quot;帀&quot;,&quot;Z&quot;})))</code></p>
 <figure data-type="image" tabindex="3"><img src="https://y0823.github.io/post-images/1583156766471.png" alt="" loading="lazy"></figure>
 <p>这样就实现了汉字取拼音首字母的功能。但这个方法仍然有一个缺点，那就是无法区分多音字。</p>
 
@@ -160,7 +154,7 @@
                                 <!-- id-card -->
                                 
     <div class="id_card i-card">
-        <div class="id_card-avatar" style="background-image: url(https://y0823.github.io/images/avatar.png?v=1583158713985)">
+        <div class="id_card-avatar" style="background-image: url(https://y0823.github.io/images/avatar.png?v=1583159300783)">
         </div>
         <h1 class="id_card-title">
             不学无术

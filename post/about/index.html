@@ -7,7 +7,7 @@
 <title>
     关于 | 不学无术
 </title>
-<link rel="shortcut icon" href="https://y0823.github.io/favicon.ico?v=1583157493594">
+<link rel="shortcut icon" href="https://y0823.github.io/favicon.ico?v=1583158713985">
 <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
 <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
@@ -35,7 +35,7 @@
     <div class="nav">
         <div class="logo">
             <a href="https://y0823.github.io">
-                <img class="avatar" src="https://y0823.github.io/images/avatar.png?v=1583157493594" alt="">
+                <img class="avatar" src="https://y0823.github.io/images/avatar.png?v=1583158713985" alt="">
             </a>
             <div class="site-title">
                 <h1>
@@ -114,12 +114,10 @@
                         </div>
                         
                                 <div class="post-content">
-                                    <blockquote>
-<p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
-</blockquote>
-<h2 id="联系我呀">📬 联系我呀</h2>
-<p>Telegram    https://t.me/andyian</p>
-<p>EMAIL         yian52@gmail.com</p>
+                                    <p>欢迎来到我的小站呀，很高兴遇见你！🤝</p>
+<p><strong>📬 联系我呀</strong></p>
+<p>Telegram    <a href="https://t.me/andyian">https://t.me/andyian</a></p>
+<p>EMAIL           <a href="yian52@gmail.com">yian52@gmail.com</a></p>
 
                                 </div>
                     </article>
@@ -133,46 +131,32 @@
                 <!-- right -->
                 <div id="sidebar" class="main-container-right">
                     
-                        <!-- toc -->
-                        
-    <div class="toc-card i-card ">
-        <div class="toc-title i-card-title">目录</div>
-        <div class="toc-content">
-            <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#%E8%81%94%E7%B3%BB%E6%88%91%E5%91%80">📬 联系我呀</a></li>
-</ul>
-</li>
-</ul>
+                                <!-- id-card -->
+                                
+    <div class="id_card i-card">
+        <div class="id_card-avatar" style="background-image: url(https://y0823.github.io/images/avatar.png?v=1583158713985)">
+        </div>
+        <h1 class="id_card-title">
+            不学无术
+        </h1>
+        <h2 class="id_card-description">
+            不学无术，故而求学。
+        </h2>
+        <!--  -->
+        <div class="id_card-sns">
+            <!-- github -->
+            
+                    <!-- twitter -->
+                    
+                            <!-- weibo -->
+                            
+                                    <!-- facebook -->
+                                    
 
         </div>
-        <script>
-            function locateCatelogList() {
-                /*获取文章目录集合,可通过:header过滤器*/
-                var alis = $('.post-content :header');
-                /*获取侧边栏目录列表集合**/
-                var sidebar_alis = $('.markdownIt-TOC a');
-                /*获取滚动条到顶部的距离*/
-                var scroll_height = $(window).scrollTop();
-                for (var i = 0; i < alis.length; i++) {
-                    /*获取锚点集合中的元素分别到顶点的距离*/
-                    var a_height = $(alis[i]).offset().top;
-                    if (a_height < scroll_height) {
-                        /*高亮显示*/
-                        sidebar_alis.removeClass('on');
-                        $(sidebar_alis[i]).addClass('on');
-                    }
-                }
-            }
-            $(function() {
-                /*绑定滚动事件 */
-                $(window).bind('scroll', locateCatelogList);
-            });
-        </script>
     </div>
     
-                            
+                                    
 
                 </div>
 

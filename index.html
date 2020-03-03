@@ -7,7 +7,7 @@
 <title>
     不学无术
 </title>
-<link rel="shortcut icon" href="https://y0823.github.io/favicon.ico?v=1583159629150">
+<link rel="shortcut icon" href="https://y0823.github.io/favicon.ico?v=1583201173883">
 <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
 <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
@@ -27,7 +27,7 @@
     <div class="nav">
         <div class="logo">
             <a href="https://y0823.github.io">
-                <img class="avatar" src="https://y0823.github.io/images/avatar.png?v=1583159629150" alt="">
+                <img class="avatar" src="https://y0823.github.io/images/avatar.png?v=1583201173883" alt="">
             </a>
             <div class="site-title">
                 <h1>
@@ -99,6 +99,99 @@
         
             <article class="post i-card">
                 <h2 class="post-title">
+                    <a href="https://y0823.github.io/post/shi-yong-power-query-shi-xian-excel-dan-yuan-ge-nei-duo-ge-shu-zi-ti-qu-qiu-he/">
+                        使用power query 实现excel单元格内多个数字提取求和
+                    </a>
+                </h2>
+                <div class="post-info">
+                    <time class="post-time">2020-03-03</time>
+                    
+                        <a href="https://y0823.github.io/tag/ZPF8Y1hIi/" class="post-tag i-tag
+                            i-tag-primary">
+            #学习笔记
+        </a>
+                        
+                </div>
+                <div class="post-article">
+                    
+                            <div class="post-content">
+                                
+                                        <div class="post-content-content">
+                                            数据的统计需要源数据是符合规则的。但是经常会碰到一些不规则的数据。比如图1中的数据，是将产品名称及数量合并在一起的。这就给后期的统计造成了相当大的麻烦。虽然网上也不乏使用excel函数解决的教程，但是多数针对的是一个单元格中只有一个数字的情况。并且函数处理这种情况还是颇为麻烦。现在用POWER QUERY来处理，就相对容易得多。
+
+图1 不带分隔符的表
+因为这涉及到几个数字的提取，并且在提取时要保证数字的完整。也就是说，3就是3，31就是31，不能识别为3和1 ，否则求和结果就是错误的。事实上，有不少power query教程都有这样的示例。但我查询一下，基本上都是针对带有明显分隔符的数据来操作的（如下图）。先按分隔符，将每一个包括数字的部分拆分到一个列表中，然后 再使用替换字符的方法，留下数字，再求和。由于有固定的分隔符，拆分成列表就比较容易。对于没有明显规律的分隔符的，就比较麻烦一点了。大部分教程中都没有提到这种状况的解决方法。经过摸索，基本上成功的解决这个麻烦。
+
+| 图2 带分隔符的表                                             |
+大体思路如下：
+
+由于数字都是跟在文本后面的，没有明显的分隔符，所以只能考虑使用文本来进行分隔。
+如果用汉字集来分隔的话，那么要取的汉字太多，效率会很低。转变思路，先将单元格中文本取出来，然后以此作为依据进行分隔。这样虽然多一步骤，但是要查找替换的文本只有几个字，效率提高的不是一点点。
+以提取出来的文本对单元格进行分隔，将数字分离到一个LIST中，再转换为数值型，求和即可。
+
+以下为实现步骤：
+
+提取除数字之外的文本。由于要提取的数值部分包括0-9数字和作为小数点的.。因此先将这部分移除，剩余的即为要用的文本部分。
+
+代码
+= Table.AddColumn(源, &amp;quot;自定义&amp;quot;, each Text.Remove([列1],{&amp;quot;0&amp;quot;..&amp;quot;9&amp;quot;,&amp;quot;.&amp;quot;}))
+
+由于后面要根据提取出来的文本进行替换，以获得数值部分，所以 将0-9及“. ”先替换掉。这个“.”一定要放在里面，否则替换出来的结果会将小数点去掉，使小数变成整数，造成结果错误。
+替换后结果如下：
+
+| 图3 提取文本                                                 |
+此时我们便获得了用来分隔原始数据的依据。
+
+用Text.SplitAny，以自定义列中获得的文本为分隔符，将列1中的文本拆分成LIST，只包含数字和“.”。但要注意的是，如果数据不规范的话，有可能list会存在&amp;quot;.&amp;quot;这样单独的一个数据。这个在后面会做处理。
+
+代码
+= Table.AddColumn(提取汉字及字符, &amp;quot;提取数字&amp;quot;, each Text.SplitAny([列1],[自定义]))
+
+
+| 图4 分隔数字到list                                           |
+
+替换出来的list中包括有空白和&amp;quot;.&amp;quot;,这样的话是无法进行求和的。所以要把这两部分排除掉。
+
+代码
+= Table.AddColumn(提取数字, &amp;quot;排除无用字符&amp;quot;, each  List.Select([提取数字],each _&amp;lt;&amp;gt;&amp;quot;&amp;quot; and _ &amp;lt;&amp;gt;&amp;quot;.&amp;quot;))
+
+
+| 图5 列表中的空白和&amp;quot;.&amp;quot;都被排除                                |
+
+此时的列表中的内容都为文本格式，没有 办法求和。所以需要转换为数值型
+
+代码
+= Table.AddColumn(去杂, &amp;quot;转换&amp;quot;, each List.Transform( [排除无用字符],Number.From))
+
+
+| 图6 转换为数值                                               |
+
+最后用List.Sum进行求和即可得到结果
+
+代码
+＝Table.AddColumn(数值转换, &amp;quot;求和&amp;quot;, each List.Sum([转换]))
+
+
+| 图7 求和                                                     |
+最后上载到excel中即可。
+
+| 图8 最终效果                                                 |
+以上这么多步骤是为了便于理解，事实上可以简化为一步即可
+代码
+  = Table.AddColumn(源, &amp;quot;合计金额&amp;quot;, each List.Sum(List.Transform(  List.Select(Text.SplitAny([列1], Text.Remove([列1],{&amp;quot;0&amp;quot;..&amp;quot;9&amp;quot;,&amp;quot;.&amp;quot;}) ),each _&amp;lt;&amp;gt;&amp;quot;&amp;quot; and _ &amp;lt;&amp;gt;&amp;quot;.&amp;quot;),Number.From)))
+
+
+| 图9 一步到位                                                 |
+
+                                        </div>
+                                        
+                                            <a class="btn btn-text" href="https://y0823.github.io/post/shi-yong-power-query-shi-xian-excel-dan-yuan-ge-nei-duo-ge-shu-zi-ti-qu-qiu-he/">Read More ~</a>
+                            </div>
+                </div>
+            </article>
+            
+            <article class="post i-card">
+                <h2 class="post-title">
                     <a href="https://y0823.github.io/post/excel-dan-yuan-ge-zhong-wen-ti-qu-pin-yin-shou-zi-mu-de-shi-xian-fang-fa/">
                         EXCEL 单元格中文提取拼音首字母的实现方法
                     </a>
@@ -107,7 +200,7 @@
                     <time class="post-time">2020-03-02</time>
                     
                         <a href="https://y0823.github.io/tag/ZPF8Y1hIi/" class="post-tag i-tag
-                            i-tag-other_2">
+                            i-tag-error">
             #学习笔记
         </a>
                         
@@ -155,7 +248,7 @@
                     <!-- 个人信息 -->
                     
     <div class="id_card i-card">
-        <div class="id_card-avatar" style="background-image: url(https://y0823.github.io/images/avatar.png?v=1583159629150)">
+        <div class="id_card-avatar" style="background-image: url(https://y0823.github.io/images/avatar.png?v=1583201173883)">
         </div>
         <h1 class="id_card-title">
             不学无术

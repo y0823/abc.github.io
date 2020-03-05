@@ -7,7 +7,7 @@
 <title>
     不学无术
 </title>
-<link rel="shortcut icon" href="https://y0823.github.io/favicon.ico?v=1583210089566">
+<link rel="shortcut icon" href="https://y0823.github.io/favicon.ico?v=1583419017246">
 <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
 <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
@@ -27,7 +27,7 @@
     <div class="nav">
         <div class="logo">
             <a href="https://y0823.github.io">
-                <img class="avatar" src="https://y0823.github.io/images/avatar.png?v=1583210089566" alt="">
+                <img class="avatar" src="https://y0823.github.io/images/avatar.png?v=1583419017246" alt="">
             </a>
             <div class="site-title">
                 <h1>
@@ -99,6 +99,98 @@
         
             <article class="post i-card">
                 <h2 class="post-title">
+                    <a href="https://y0823.github.io/post/li-yong-power-query-zhi-neng-gai-bian-shu-ju-jie-gou-de-shi-xian-fang-fa/">
+                        利用POWER QUERY智能改变数据结构的实现方法
+                    </a>
+                </h2>
+                <div class="post-info">
+                    <time class="post-time">2020-03-05</time>
+                    
+                </div>
+                <div class="post-article">
+                    
+                            <div class="post-content">
+                                
+                                        <div class="post-content-content">
+                                            在学习Power Query的时候，看到老师讲到一个利用Rercord功能来实现数据结构转换的示例。颇有些复杂。因为里面用的函数和嵌套也是比较多，比较容易晕头。于是自己尝试用不一样的方法来解决，经过摸索，用了不一样的方法来实现。现将方法记录下来，以备后查。
+
+
+先上示例文件截图
+
+​	 源文件内容如下
+
+
+
+
+源图
+
+效果图
+
+
+个人摸索方法笔记
+
+载入表到POWER QUERY
+
+
+图1
+​	2. 由于每个家庭成员的数量不一样，因此需要先规划好能容得下每家成员的最大列数。这样保证每个家庭成员都能显示在列中。否则会默认取第一个家庭成员家庭的数量作为列的数量，会造成成员数量超过第一个家庭成员数量的家庭成员显示不全。提取最大家庭成员数量的公式：
+
+
+= List.Max(Table.Group(源, {&amp;quot;户主&amp;quot;}, {{&amp;quot;计数&amp;quot;, each Table.RowCount(_)}})[计数])
+​	将此步骤重命名为pcount，以备后续步骤引用方便。
+
+​	图2
+​			3. 利用分组功能，并修改公式，将家庭关系和成员连接起来，并且用record.fromlist生成每个家庭的record。公式为
+= Table.Group( 源, {&amp;quot;户主&amp;quot;}, {&amp;quot;计数&amp;quot;, each Record.FromList(List.Transform({0..pcount-1},(x)=&amp;gt;_[关系]{x}&amp;amp;[成员]{x} ),{&amp;quot;1&amp;quot;..Text.From(pcount)})})
+其中
+List.Transform({0..pcount-1},(x)=&amp;gt;_[关系]{x}&amp;amp;[成员]{x} )
+这段函数是将每个家庭的关系和成员连接起来，pcount是上一步中计算出来的最大成员数量。
+{&amp;quot;1&amp;quot;..Text.From(pcount)}这个函数是作为record.fromlist函数的第二参数使用，目的是生成字段名称，这里生成的字段名称为{&amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,&amp;quot;5&amp;quot;,&amp;quot;6&amp;quot;}。但是这样生成的record，因为有些家庭成员数量达不到pcount的数量，因此会出现error。但这个不影响，会在后面的步骤会来解决。
+
+图3
+
+
+生成Record后，就要将其展开。但是如果直接用鼠标将其展开的话，会显示固定的列名称，即{&amp;quot;1&amp;quot;,&amp;quot;2&amp;quot;,&amp;quot;3&amp;quot;,&amp;quot;4&amp;quot;,&amp;quot;5&amp;quot;,&amp;quot;6&amp;quot;}，并且这样的列名称在源数据变化时，不会跟着改变。也就是说，假设最大成员数量有变化时，用这种方法展开的表，列数并不会有变化。这是个比较大的问题，非常不智能。
+
+图片4
+
+
+为了避免这种情况，在扩展这一步，需要使用动态列名称，保证成员人数变化时，列字段名也跟着变化。公式为
+
+
+  `= Table.ExpandRecordColumn(分组的行, &amp;quot;计数&amp;quot;, {&amp;quot;1&amp;quot;..Text.From(pcount)}, {&amp;quot;1&amp;quot;..Text.From(pcount)})`
+
+其中{&amp;quot;1&amp;quot;..Text.From(pcount)}为动态列字段名，最大成员数量变化时，列字段名称也会跟着伸缩
+
+图片5
+
+成员减少后，列数减少
+
+成员增加后，列数增加
+
+展开后，前面步骤中出现的error会显示出来。我们是不希望这些error加载到excel中后再进行二次处理。所以我们在power query中就处理好。如果用正常的全选 →替换错误值，是可以替换掉error的。但和第4步面临同样的问题，就是列数变化后，替换的列仍然保持不变，造成新增加的列中的error无法被替换。因此，也需要使用动态列字段名。公式为
+
+= Table.ReplaceErrorValues(#&amp;quot;展开的“计数”&amp;quot;, List.Transform({&amp;quot;1&amp;quot;..Text.From(pcount)},each {_,&amp;quot;&amp;quot;}))
+因为替换错误值函数Table.ReplaceErrorValues，第二参数是类似于{{&amp;quot;户主&amp;quot;, &amp;quot;&amp;quot;}, {&amp;quot;1&amp;quot;, &amp;quot;&amp;quot;}, {&amp;quot;2&amp;quot;, &amp;quot;&amp;quot;}, {&amp;quot;3&amp;quot;, &amp;quot;&amp;quot;}, {&amp;quot;4&amp;quot;, &amp;quot;&amp;quot;}, {&amp;quot;5&amp;quot;, &amp;quot;&amp;quot;}, {&amp;quot;6&amp;quot;, &amp;quot;&amp;quot;}}这样的LIST结构。所以需要用List.Transform({&amp;quot;1&amp;quot;..Text.From(pcount)},each {_,&amp;quot;&amp;quot;})构造这样的一个LIST，来实现动态替换的效果。
+
+图片6
+
+非动态替换
+
+图片7
+
+这样就最终实现了我们想要的结果。而且步骤也并不多，相对来讲可读性还算好。关键是可以自由扩展。因为我也是初学者，也许有更好的方法，留待将来发现。
+
+
+                                        </div>
+                                        
+                                            <a class="btn btn-text" href="https://y0823.github.io/post/li-yong-power-query-zhi-neng-gai-bian-shu-ju-jie-gou-de-shi-xian-fang-fa/">Read More ~</a>
+                            </div>
+                </div>
+            </article>
+            
+            <article class="post i-card">
+                <h2 class="post-title">
                     <a href="https://y0823.github.io/post/shi-yong-power-query-shi-xian-excel-dan-yuan-ge-nei-duo-ge-shu-zi-ti-qu-qiu-he/">
                         使用power query 实现excel单元格内多个数字提取求和
                     </a>
@@ -107,7 +199,7 @@
                     <time class="post-time">2020-03-03</time>
                     
                         <a href="https://y0823.github.io/tag/ZPF8Y1hIi/" class="post-tag i-tag
-                            i-tag-info">
+                            i-tag-other_4">
             #学习笔记
         </a>
                         
@@ -194,7 +286,7 @@
                     <time class="post-time">2020-03-02</time>
                     
                         <a href="https://y0823.github.io/tag/ZPF8Y1hIi/" class="post-tag i-tag
-                            i-tag-primary">
+                            i-tag-other_2">
             #学习笔记
         </a>
                         
@@ -242,7 +334,7 @@
                     <!-- 个人信息 -->
                     
     <div class="id_card i-card">
-        <div class="id_card-avatar" style="background-image: url(https://y0823.github.io/images/avatar.png?v=1583210089566)">
+        <div class="id_card-avatar" style="background-image: url(https://y0823.github.io/images/avatar.png?v=1583419017246)">
         </div>
         <h1 class="id_card-title">
             不学无术

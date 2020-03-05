@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://y0823.github.io</id>
     <title>不学无术</title>
-    <updated>2020-03-03T04:34:59.686Z</updated>
+    <updated>2020-03-05T14:37:54.825Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://y0823.github.io"/>
     <link rel="self" href="https://y0823.github.io/atom.xml"/>
@@ -10,6 +10,83 @@
     <logo>https://y0823.github.io/images/avatar.png</logo>
     <icon>https://y0823.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 不学无术</rights>
+    <entry>
+        <title type="html"><![CDATA[利用POWER QUERY智能改变数据结构的实现方法]]></title>
+        <id>https://y0823.github.io/post/li-yong-power-query-zhi-neng-gai-bian-shu-ju-jie-gou-de-shi-xian-fang-fa/</id>
+        <link href="https://y0823.github.io/post/li-yong-power-query-zhi-neng-gai-bian-shu-ju-jie-gou-de-shi-xian-fang-fa/">
+        </link>
+        <updated>2020-03-05T14:13:14.000Z</updated>
+        <content type="html"><![CDATA[<p>在学习Power Query的时候，看到老师讲到一个利用Rercord功能来实现数据结构转换的示例。颇有些复杂。因为里面用的函数和嵌套也是比较多，比较容易晕头。于是自己尝试用不一样的方法来解决，经过摸索，用了不一样的方法来实现。现将方法记录下来，以备后查。</p>
+<ul>
+<li>
+<p><strong>先上示例文件截图</strong></p>
+<ul>
+<li>​	 源文件内容如下<br>
+<img src="https://y0823.github.io/post-images/1583418199605.png" alt="" loading="lazy"></li>
+</ul>
+</li>
+</ul>
+<p>源图<br>
+<img src="https://y0823.github.io/post-images/1583418104504.png" alt="" loading="lazy"><br>
+效果图</p>
+<ul>
+<li>
+<p><strong>个人摸索方法笔记</strong></p>
+<ol>
+<li>载入表到POWER QUERY</li>
+</ol>
+<figure data-type="image" tabindex="1"><img src="https://y0823.github.io/post-images/1583418266416.png" alt="" loading="lazy"></figure>
+<p>图1</p>
+<p>​	2. 由于每个家庭成员的数量不一样，因此需要先规划好能容得下每家成员的最大列数。这样保证每个家庭成员都能显示在列中。否则会默认取第一个家庭成员家庭的数量作为列的数量，会造成成员数量超过第一个家庭成员数量的家庭成员显示不全。提取最大家庭成员数量的公式：</p>
+</li>
+</ul>
+<p><code>= List.Max(Table.Group(源, {&quot;户主&quot;}, {{&quot;计数&quot;, each Table.RowCount(_)}})[计数])</code></p>
+<p>​	将此步骤重命名为pcount，以备后续步骤引用方便。<br>
+<img src="https://y0823.github.io/post-images/1583418296496.png" alt="" loading="lazy"><br>
+​	图2</p>
+<p>​			3. 利用分组功能，并修改公式，将家庭关系和成员连接起来，并且用record.fromlist生成每个家庭的record。公式为</p>
+<p><code>= Table.Group( 源, {&quot;户主&quot;}, {&quot;计数&quot;, each Record.FromList(List.Transform({0..pcount-1},(x)=&gt;_[关系]{x}&amp;[成员]{x} ),{&quot;1&quot;..Text.From(pcount)})})</code></p>
+<p>其中</p>
+<p><code>List.Transform({0..pcount-1},(x)=&gt;_[关系]{x}&amp;[成员]{x} )</code></p>
+<p>这段函数是将每个家庭的关系和成员连接起来，pcount是上一步中计算出来的最大成员数量。</p>
+<p><code>{&quot;1&quot;..Text.From(pcount)}</code>这个函数是作为record.fromlist函数的第二参数使用，目的是生成字段名称，这里生成的字段名称为{&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;}。但是这样生成的record，因为有些家庭成员数量达不到pcount的数量，因此会出现error。但这个不影响，会在后面的步骤会来解决。<br>
+<img src="https://y0823.github.io/post-images/1583418323356.png" alt="" loading="lazy"><br>
+图3</p>
+<ol start="4">
+<li>
+<p>生成Record后，就要将其展开。但是如果直接用鼠标将其展开的话，会显示固定的列名称，即{&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;}，并且这样的列名称在源数据变化时，不会跟着改变。也就是说，假设最大成员数量有变化时，用这种方法展开的表，列数并不会有变化。这是个比较大的问题，非常不智能。<br>
+<img src="https://y0823.github.io/post-images/1583418332194.png" alt="" loading="lazy"><br>
+图片4</p>
+</li>
+<li>
+<p>为了避免这种情况，在扩展这一步，需要使用动态列名称，保证成员人数变化时，列字段名也跟着变化。公式为</p>
+</li>
+</ol>
+<pre><code>  `= Table.ExpandRecordColumn(分组的行, &quot;计数&quot;, {&quot;1&quot;..Text.From(pcount)}, {&quot;1&quot;..Text.From(pcount)})`
+</code></pre>
+<p>其中{&quot;1&quot;..Text.From(pcount)}为动态列字段名，最大成员数量变化时，列字段名称也会跟着伸缩<br>
+<img src="https://y0823.github.io/post-images/1583418425026.png" alt="" loading="lazy"><br>
+图片5</p>
+<p><img src="https://y0823.github.io/post-images/1583418437271.png" alt="" loading="lazy"><br>
+成员减少后，列数减少</p>
+<p><img src="https://y0823.github.io/post-images/1583418447066.png" alt="" loading="lazy"><br>
+成员增加后，列数增加</p>
+<ol start="6">
+<li>展开后，前面步骤中出现的error会显示出来。我们是不希望这些error加载到excel中后再进行二次处理。所以我们在power query中就处理好。如果用正常的全选 →替换错误值，是可以替换掉error的。但和第4步面临同样的问题，就是列数变化后，替换的列仍然保持不变，造成新增加的列中的error无法被替换。因此，也需要使用动态列字段名。公式为</li>
+</ol>
+<p><code>= Table.ReplaceErrorValues(#&quot;展开的“计数”&quot;, List.Transform({&quot;1&quot;..Text.From(pcount)},each {_,&quot;&quot;}))</code></p>
+<p>因为替换错误值函数Table.ReplaceErrorValues，第二参数是类似于{{&quot;户主&quot;, &quot;&quot;}, {&quot;1&quot;, &quot;&quot;}, {&quot;2&quot;, &quot;&quot;}, {&quot;3&quot;, &quot;&quot;}, {&quot;4&quot;, &quot;&quot;}, {&quot;5&quot;, &quot;&quot;}, {&quot;6&quot;, &quot;&quot;}}这样的LIST结构。所以需要用<font color=red><code>List.Transform({&quot;1&quot;..Text.From(pcount)},each {_,&quot;&quot;})</code></font>构造这样的一个LIST，来实现动态替换的效果。</p>
+<p><img src="https://y0823.github.io/post-images/1583418610377.png" alt="" loading="lazy"><br>
+图片6<br>
+<img src="https://y0823.github.io/post-images/1583418650488.png" alt="" loading="lazy"><br>
+非动态替换<br>
+<img src="https://y0823.github.io/post-images/1583418658348.png" alt="" loading="lazy"><br>
+图片7</p>
+<ol start="7">
+<li>这样就最终实现了我们想要的结果。而且步骤也并不多，相对来讲可读性还算好。关键是可以自由扩展。因为我也是初学者，也许有更好的方法，留待将来发现。</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[使用power query 实现excel单元格内多个数字提取求和]]></title>
         <id>https://y0823.github.io/post/shi-yong-power-query-shi-xian-excel-dan-yuan-ge-nei-duo-ge-shu-zi-ti-qu-qiu-he/</id>
